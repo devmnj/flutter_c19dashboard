@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'customFloatingButon.dart';
 import 'StateStatusScroller.dart';
 import 'models.dart';
+import 'other_widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,10 +37,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   Future<List<StateInfo>> _getdataOffline() async {
     var data = await DefaultAssetBundle.of(context)
         .loadString('assets/state_district_wise.json');
     var jdata = json.decode(data) as Map;
+
+    //Test Data
+    var test_data = await DefaultAssetBundle.of(context)
+        .loadString('assets/state_test_data.json');
+    var tdata = json.decode(test_data) as Map;
+
     List<StateInfo> jlist = [];
     List<DistInfo> dlist = [];
 
@@ -65,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         districs.add(new DistInfo(dn, data));
       }
       StateInfo stateInfo = new StateInfo(sname, jdata[sname]['statecode'],
-          new Status(act, con, rec, dec), districs);
+          new Status(act, con, rec, dec,), districs,null);
 
       return stateInfo;
     }
@@ -110,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
         districs.add(new DistInfo(dn, data));
       }
       StateInfo stateInfo = new StateInfo(sname, jdata[sname]['statecode'],
-          new Status(act, con, rec, dec), districs);
+          new Status(act, con, rec, dec), districs,null);
 
       return stateInfo;
     }
@@ -150,7 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
       routeSettings: routeSettings,
     );
   }
-
+  // final controler=AnimationController(vsync: this, duration: Duration(seconds: 2));
+  // final animation=Tween(begin: 0.0,end: 1.0,).animate(controler);
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -177,45 +186,45 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      drawer: Drawer(
-          child: ListView(
-        children: [
-          ListTile(
-            title: Text('About'),
-            onTap: () {
-              showAboutDialog(
-                  context: context,
-                  applicationName: "Covid Status",
-                  applicationVersion: "Beta",
-                  children: [
-                    Text('Developer: Manoj A.P'),
-                    Text('can be reached @ manojap@outlook.com'),
-                    Text('Web:' + 'http://manojap.github.io')
-                  ],
-                  applicationIcon: Icon(Icons.games));
-            },
-            leading: Icon(Icons.help),
-          )
-        ],
-      )),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.help),
+      // drawer: Drawer(
+      //     child: ListView(
+      //   children: [
+      //     ListTile(
+      //       title: Text('About'),
+      //       onTap: () {
+      //         showAboutDialog(
+      //             context: context,
+      //             applicationName: "Covid Status",
+      //             applicationVersion: "Beta",
+      //             children: [
+      //               Text('Developer: Manoj A.P'),
+      //               Text('can be reached @ manojap@outlook.com'),
+      //               Text('Web:' + 'http://manojap.github.io')
+      //             ],
+      //             applicationIcon: Icon(Icons.games));
+      //       },
+      //       leading: Icon(Icons.help),
+      //     )
+      //   ],
+      // )),
+      floatingActionButton: (MButon(
         onPressed: () {
           showAboutDialog(
               context: context,
               applicationName: "Covid Status",
               applicationVersion: "Beta",
               children: [
+
                 Text('Developer: Manoj A.P'),
                 Text('can be reached @ manojap@outlook.com'),
                 Text('Web:' + 'http://manojap.github.io')
               ],
               applicationIcon: Icon(Icons.games));
         },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.lightBlue,
+        color: Colors.brown,
         child: Container(
           height: 50,
         ),
@@ -228,24 +237,26 @@ class _MyHomePageState extends State<MyHomePage> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
+                  return    ListTile(  shape: StadiumBorder(),
                     trailing: Icon(Icons.more_horiz),
                     hoverColor: Colors.cyan,
-                    leading: CircleAvatar(
-                      child: Text(
+                    leading:  CircleAvatar(
+
+                      child:    Text(
                         snapshot.data[index].abr,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    title: Text(snapshot.data[index].sname),
+                    title: Text(snapshot.data[index].sname,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.blue)),
                     focusColor: Colors.deepOrangeAccent,
-                    subtitle: Text("Active:" +
-                        snapshot.data[index].status.active.toString()),
+                    subtitle: Text("Recovered:" +
+                        snapshot.data[index].status.recovered.toString() + " | " + "Dead:" +
+                        snapshot.data[index].status.deceased.toString() ,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black54),),
                     onTap: () {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (context) => StateDetailPage1(
+                              builder: (context) => StateDetailPage(
                                     info: snapshot.data[index],
                                   )));
                     },
@@ -263,149 +274,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     ));
-  }
-}
-
-class StateDetailPage1 extends StatelessWidget {
-  @override
-  final StateInfo info;
-
-  const StateDetailPage1({Key key, this.info}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            info.sname,
-          ),
-        ),
-        body: Container(
-            child: Column(
-          children: <Widget>[
-            StatusScroller(
-              status: info.status,
-            ),
-            NeattextBox(
-              title: 'Districts',
-              styl: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-            ),
-            Container(
-                child: Expanded(
-              child: StackCards(
-                dist: info.distInfo,
-              ),
-            ))
-          ],
-        )));
-  }
-}
-
-class StackCards extends StatelessWidget {
-  final List<DistInfo> dist;
-
-  StackCards({this.dist});
-
-  Widget _buildDistirictInfo(BuildContext context, int index) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          DistrictText(
-            dist: dist[index],
-          )
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: _buildDistirictInfo,
-      itemCount: dist.length,
-    );
-  }
-}
-
-class NeattextBox extends StatelessWidget {
-  final String title;
-  final TextStyle styl;
-
-  const NeattextBox({Key key, @required this.title, this.styl})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            title,
-            textAlign: TextAlign.left,
-            style: styl,
-          ),
-        ));
-  }
-}
-
-class DistrictText extends StatelessWidget {
-  final DistInfo dist;
-
-  const DistrictText({Key key, this.dist}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Center(
-              child: NeattextBox(
-            title: dist.dname,
-            styl: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: Colors.lightGreen),
-          )),
-          Row(
-            children: [
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.blue),
-                title: "Act :" + dist.status.active.toString(),
-              ),
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.blueGrey),
-                title: "Con :" + dist.status.confirmed.toString(),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.green),
-                title: "Rec :" + dist.status.recovered.toString(),
-              ),
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.deepOrangeAccent),
-                title: "Dead :" + dist.status.deceased.toString(),
-              )
-            ],
-          )
-        ],
-      ),
-    );
   }
 }
