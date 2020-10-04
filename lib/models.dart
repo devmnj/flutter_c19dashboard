@@ -9,14 +9,15 @@ class Status {
   Status(this.active, this.confirmed, this.recovered, this.deceased);
 }
 class TestResult {
-  final int positive;
-  final int negaitive;
-  final int unconfirmed;
-  final int tests_per_positive_case;
-  final int released_from_quarantine;
-  final int currently_in_quarantine;
+  final double positive;
+  final double negaitive;
+  final double unconfirmed;
+  final double tests_per_positive_case;
+  final double released_from_quarantine;
+  final double currently_in_quarantine;
+  final double totaltested;
 
-  TestResult(this.positive, this.negaitive, this.unconfirmed, this.tests_per_positive_case, this.released_from_quarantine, this.currently_in_quarantine);
+  TestResult(this.positive, this.negaitive, this.unconfirmed, this.tests_per_positive_case, this.released_from_quarantine, this.currently_in_quarantine, this.totaltested);
 
 }
 

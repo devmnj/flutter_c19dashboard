@@ -1,42 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'StateStatusScroller.dart';
 import 'models.dart';
-
-class StateDetailPage1 extends StatelessWidget {
-  @override
-  final StateInfo info;
-
-  const StateDetailPage1({Key key, this.info}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            info.sname,
-          ),
-        ),
-        body: Container(
-            child: Column(
-          children: <Widget>[
-            StatusScroller(
-              status: info.status,
-            ),
-            NeattextBox(
-              title: 'Districts',
-              styl: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-            ),
-            Container(
-                child: Expanded(
-              child: StackCards(
-                dist: info.distInfo,
-              ),
-            ))
-          ],
-        )));
-  }
-}
 
 class DistrictDetailPage extends StatelessWidget {
   final DistInfo distInfo;
@@ -85,7 +50,6 @@ class DistrictDetailPage extends StatelessWidget {
                         color: Colors.deepOrange,
                         size: 45,
                       ),
-
                       SizedBox(
                         height: 15,
                       ),
@@ -149,6 +113,14 @@ class DistrictDetailPage extends StatelessWidget {
   }
 }
 
+class StatesHomePage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+
+  }
+}
+
 class StateDetailPage extends StatelessWidget {
   @override
   final StateInfo info;
@@ -165,7 +137,9 @@ class StateDetailPage extends StatelessWidget {
         body: Container(
             child: Column(
           children: <Widget>[
-            Text('Place holder'),
+            TestStatus(
+              result: info.tests,
+            ),
             Expanded(
                 child: DistrictList(
               dist: info.distInfo,
@@ -232,112 +206,127 @@ class DistrictList extends StatelessWidget {
   }
 }
 
-class StackCards extends StatelessWidget {
-  final List<DistInfo> dist;
+class TestStatus extends StatelessWidget {
+  final TestResult result;
 
-  StackCards({this.dist});
-
-  Widget _buildDistirictInfo(BuildContext context, int index) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          DistrictText(
-            dist: dist[index],
-          )
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: _buildDistirictInfo,
-      itemCount: dist.length,
-    );
-  }
-}
-
-class NeattextBox extends StatelessWidget {
-  final String title;
-  final TextStyle styl;
-
-  const NeattextBox({Key key, @required this.title, this.styl})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            title,
-            textAlign: TextAlign.left,
-            style: styl,
-          ),
-        ));
-  }
-}
-
-class DistrictText extends StatelessWidget {
-  final DistInfo dist;
-
-  const DistrictText({Key key, this.dist}) : super(key: key);
+  const TestStatus({Key key, this.result}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Center(
-              child: NeattextBox(
-            title: dist.dname,
-            styl: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: Colors.lightGreen),
-          )),
-          Row(
-            children: [
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.blue),
-                title: "Act :" + dist.status.active.toString(),
+      width: 1201,
+      child: Row(
+
+          // margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Column(children: [
+                    Tooltip(
+                        message: 'Positive count',
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.redAccent,
+                        )),
+                    // Text(
+                    //   'Positive',
+                    //   style: TextStyle(color: Colors.black, fontSize: 20),
+                    // ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      result.positive.toString(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                ),
               ),
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.blueGrey),
-                title: "Con :" + dist.status.confirmed.toString(),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.green),
-                title: "Rec :" + dist.status.recovered.toString(),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Center(
+                  child: Column(children: [
+                    Tooltip(
+                      message: 'Negative count',
+                      child: Icon(
+                        Icons.airline_seat_recline_normal,
+                        color: Colors.green,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      result.negaitive.toString(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                ),
               ),
-              NeattextBox(
-                styl: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.deepOrangeAccent),
-                title: "Dead :" + dist.status.deceased.toString(),
-              )
-            ],
-          )
-        ],
-      ),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Center(
+                  child: Column(children: [
+                    Tooltip(
+                      message: 'Unconfirmed count',
+                      child: Icon(
+                        Icons.airline_seat_recline_normal,
+                        color: Colors.orangeAccent,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      result.unconfirmed.toString(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Center(
+                  child: Column(children: [
+                    Tooltip(
+                      message: 'Total Tested ',
+                      child: Icon(
+                        Icons.title,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      result.totaltested.toString(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+          ]),
     );
   }
 }
