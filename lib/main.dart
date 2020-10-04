@@ -41,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   Future<List<StateInfo>> _getdata() async {
     List<StateInfo> jlist = [];
     List<DistInfo> dlist = [];
@@ -88,56 +89,53 @@ class _MyHomePageState extends State<MyHomePage> {
                   element['updatedon'] == ye && element['state'] == name)
               .toList();
           for (LinkedHashMap t in l) {
-
-              t.forEach((key, value) {
-                if (key == 'positive' && value != "" && value != null) {
-                  tpo += double.tryParse(t['positive']);
+            t.forEach((key, value) {
+              if (key == 'positive' && value != "" && value != null) {
+                tpo += double.tryParse(t['positive']);
+              }
+              if (key == 'negative' && value != "" && value != null) {
+                try {
+                  tne += double.tryParse(t['negative']);
+                  ;
+                } catch (e) {}
+              }
+              if (key == 'unconfirmed' && value != "") {
+                try {
+                  tunc += int.tryParse(t['unconfirmed']);
+                } catch (e) {
+                  // TODO
                 }
-                if (key == 'negative' && value != "" && value != null) {
-                  try {
-                    tne += double.tryParse(t['negative']);
-                    ;
-                  } catch (e) {}
+              }
+              if (key == 'totaltested' && value != "") {
+                try {
+                  ttested += int.tryParse(t['totaltested']);
+                } catch (e) {
+                  // TODO
                 }
-                if (key == 'unconfirmed' && value != "") {
-                  try {
-                    tunc += int.tryParse(t['unconfirmed']);
-                  } catch (e) {
-                    // TODO
-                  }
+              }
+              if (key == 'totalpeoplecurrentlyinquarantine' && value != "") {
+                try {
+                  c_in_q += int.tryParse(t['totalpeoplecurrentlyinquarantine']);
+                } catch (e) {
+                  // TODO
                 }
-                if (key == 'totaltested' && value != "") {
-                  try {
-                    ttested += int.tryParse(t['totaltested']);
-                  } catch (e) {
-                    // TODO
-                  }
+              }
+              if (key == 'totalpeoplereleasedfromquarantine' && value != "") {
+                try {
+                  r_fr_q +=
+                      int.tryParse(t['totalpeoplereleasedfromquarantine']);
+                } catch (e) {
+                  // TODO
                 }
-                if (key == 'totalpeoplecurrentlyinquarantine' && value != "") {
-                  try {
-                    c_in_q +=
-                        int.tryParse(t['totalpeoplecurrentlyinquarantine']);
-                  } catch (e) {
-                    // TODO
-                  }
+              }
+              if (key == 'testsperpositivecase' && value != "") {
+                try {
+                  tp_p += int.tryParse(t['testsperpositivecase']);
+                } catch (e) {
+                  // TODO
                 }
-                if (key == 'totalpeoplereleasedfromquarantine' && value != "") {
-                  try {
-                    r_fr_q +=
-                        int.tryParse(t['totalpeoplereleasedfromquarantine']);
-                  } catch (e) {
-                    // TODO
-                  }
-                }
-                if (key == 'testsperpositivecase' && value != "") {
-                  try {
-                    tp_p += int.tryParse(t['testsperpositivecase']);
-                  } catch (e) {
-                    // TODO
-                  }
-                }
-              });
-
+              }
+            });
           }
           TestResult testResult =
               new TestResult(tpo, tne, tunc, tp_p, r_fr_q, c_in_q, ttested);
@@ -350,11 +348,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //Style constants
+    const TextStyle all_india_sub_title = TextStyle(
+        fontSize: 12, color: Colors.yellow, fontWeight: FontWeight.bold);
+
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
         title: Text(
-          'States',
+          'C19 Dashboard',
           style: TextStyle(color: Colors.black),
         ),
         leading: Icon(
@@ -374,33 +376,19 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      // drawer: Drawer(
-      //     child: ListView(
-      //   children: [
-      //     ListTile(
-      //       title: Text('About'),
-      //       onTap: () {
-      //         showAboutDialog(
-      //             context: context,
-      //             applicationName: "Covid Status",
-      //             applicationVersion: "Beta",
-      //             children: [
-      //               Text('Developer: Manoj A.P'),
-      //               Text('can be reached @ manojap@outlook.com'),
-      //               Text('Web:' + 'http://manojap.github.io')
-      //             ],
-      //             applicationIcon: Icon(Icons.games));
-      //       },
-      //       leading: Icon(Icons.help),
-      //     )
-      //   ],
-      // )),
+
       floatingActionButton: (MButon(
+        title: 'About',
+        style: TextStyle(color: Colors.black),
+        background_color: Colors.deepOrange,
+        splash: Colors.orange,
+        // newshape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.all(Radius.circular(10))),
         onPressed: () {
           showAboutDialog(
               context: context,
-              applicationName: "Covid Status",
-              applicationVersion: "Beta",
+              applicationName: "Dashboard - This is an open source project based on the data provide by http://api.covid19india.org",
+              applicationVersion: "1.0.0",
               children: [
                 Text('Developer: Manoj A.P'),
                 Text('can be reached @ manojap@outlook.com'),
@@ -409,8 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
               applicationIcon: Icon(Icons.games));
         },
       )),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomAppBar(
         color: Colors.brown,
         child: Container(
@@ -418,44 +405,42 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.white,
           child: Wrap(
             children: [
-
               GestureDetector(
-                child: Tooltip(message: 'Refressh',
-                  child: Icon(
-                    Icons.home,
-                    size: 55,
-
+                child: Tooltip(
+                  message: 'Refresh',
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.home,
+                      size: 40,
+                    ),
                   ),
-                ),onTap: (){
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) => MyApp(
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      new MaterialPageRoute(builder: (context) => MyApp()));
+                },
+              ),
+              SizedBox(
+                width: 35,
+              ),
+              GestureDetector(
+                child: Tooltip(
+                  message: 'Test Results',
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.control_point_duplicate,
+                      size: 40,color: Colors.lightBlueAccent,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(context,
+                      new MaterialPageRoute(builder: (context) => StatesTests()));
+                },
+              ),
 
-                        )));
-              },
-              ),
-              SizedBox(
-                width: 35,
-              ),
-              Icon(
-                Icons.recent_actors,color: Colors.brown,
-                size: 55,
-              ),
-              SizedBox(
-                width: 35,
-              ),
-              Icon(
-                Icons.flag,color: Colors.green,
-                size: 55,
-              ),
-              SizedBox(
-                width: 35,
-              ),
-              Icon(
-                Icons.email,color: Colors.lightBlue,
-                size: 55,
-              )
             ],
           ),
           height: 50,
@@ -501,8 +486,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           new MaterialPageRoute(
                               builder: (context) => StateDetailPage(
-                                    info: snapshot.data[index],
-                                  )));
+                                info: snapshot.data[index],
+                              )));
                     },
                   );
                 },

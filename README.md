@@ -1,6 +1,6 @@
-# flutter_c19dashboard
+# Covid Dashboard App
 
-A Covid C19 Dashboard
+A Dashboard for Covid Status[India] based on data provide by https://api.covid19india.org
 
 ## Getting Started
 
