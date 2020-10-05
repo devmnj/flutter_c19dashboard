@@ -393,6 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text('Developer: Manoj A.P'),
                 Text('can be reached @ manojap@outlook.com'),
                 Text('Web:' + 'http://manojap.github.io')
+
               ],
               applicationIcon: Icon(Icons.games));
         },
