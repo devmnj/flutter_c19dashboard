@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'C19 Dashboard',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -392,7 +392,10 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Text('Developer: Manoj A.P'),
                 Text('can be reached @ manojap@outlook.com'),
-                Text('Web:' + 'http://manojap.github.io')
+                Text('Web:' + 'http://manojap.github.io'),
+
+
+
 
               ],
               applicationIcon: Icon(Icons.games));
@@ -448,11 +451,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Container(
+
+
         child: FutureBuilder(
-          future: _getdata(),
+          future: _getdataOffline(context),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {
-              return ListView.builder(
+              return   ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   return ListTile(
